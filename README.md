@@ -40,7 +40,7 @@ It includes dark mode support, activity logging, audio greeting, NLP-powered com
 git clone https://github.com/Nkosi-Mmasebotsana/CyberSecurityChatbotGUI2.git
 
 
--🚀** Running the Application**
+###🚀 Running the Application
 
 (1) **Open in Visual Studio 2022:**
 
@@ -61,7 +61,7 @@ git clone https://github.com/Nkosi-Mmasebotsana/CyberSecurityChatbotGUI2.git
     - "start the quiz"
 
 
-💬 **Sample Commands**
+###💬 Sample Commands
 
 | Command                      | Description                                    |
 | ---------------------------- | ---------------------------------------------- |
@@ -74,7 +74,7 @@ git clone https://github.com/Nkosi-Mmasebotsana/CyberSecurityChatbotGUI2.git
 | phishing or malware          | Triggers a cybersecurity tip from the chatbot. |
 
 
-📂 **Project Structure**
+###📂Project Structure
 
 CyberSecurityChatbotGUI/
 ├── CyberSecurityChatbotGUI.sln       # Visual Studio solution file
@@ -82,14 +82,14 @@ CyberSecurityChatbotGUI/
 ├── ChatBot.cs                        # Chat logic and keyword detection
 ├── QuizData.cs                       # Static class containing quiz questions
 ├── Memory.cs                         # Stores user preferences (e.g., name)
-├── SentimentAnalyzer.cs             # Analyzes positive/negative sentiment (if used)
+├── SentimentAnalyzer.cs              # Analyzes positive/negative sentiment (if used)
 ├── UIHelpers.cs                      # Helper formatting for messages (console version only)
 ├── TaskItem.cs                       # Represents a single task with optional reminder
 ├── Resources/
 │   └── greeting.wav                  # Embedded welcome audio file
 
 
-🎨 **UI Overview**
+###🎨 UI Overview
 
 **Chatbot Tab:**
 - Colored feedback (tips in green, errors in red, greetings in purple).
@@ -103,14 +103,14 @@ CyberSecurityChatbotGUI/
 - Restart as needed.
 
 
-🧪 ** Development Notes**
+###🧪 Development Notes
 - Designed and built using Windows Forms in Visual Studio 2022.
 - Code organized into logical components (chat, tasks, quiz).
 - Embedded Resources used for audio playback — greeting.wav is bundled within the project.
 - Dark mode and ASCII art dynamically styled via isDarkModeEnabled.
 
 
-🔗 **Version Control & GitHub Usage**
+###🔗 Version Control & GitHub Usage
 This project was version-controlled and deployed using the following process:
 
 (1) Created a new repository on GitHub.com.
@@ -119,5 +119,5 @@ This project was version-controlled and deployed using the following process:
 (4) Connected to the existing GitHub repo and pushed directly using Visual Studio.
 
 
-🧑‍💻 **Author**
+###🧑‍💻 Author
 Created by Mmasebotsana Nkosi | © 2025
