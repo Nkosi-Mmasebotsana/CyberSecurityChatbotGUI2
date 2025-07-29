@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CyberSecurityChatbot;
 using Microsoft.VisualBasic; // Needed for InputBox
+using System.Linq; // Added for randomization
+
 
 namespace CyberSecurityChatbotGUI
 {
@@ -20,9 +22,11 @@ namespace CyberSecurityChatbotGUI
         //  Add a list to store TaskItems
         private List<TaskItem> tasks = new List<TaskItem>();
 
+
         // State for reminder flow
         private bool awaitingReminder = false;
         private TaskItem lastAddedTask = null;
+
 
         // Activity log to store recent chatbot actions
         private List<string> activityLog = new List<string>();
@@ -30,13 +34,129 @@ namespace CyberSecurityChatbotGUI
         private string userName = "friend";
 
 
+        private int currentQuestionIndex = 0;
+        private int score = 0;
+        private List<QuizQuestion> quizQuestions;
+
+
+        private CheckBox chkDarkMode;
+        private bool isDarkModeEnabled = false;
+
+        private int asciiLogoLength = 0;
+
+
         public Form1()
         {
             InitializeComponent();
             this.Load += Form1_Load;
+            InitializeDarkModeToggle();
             this.FormClosing += Form1_FormClosing;
 
         }
+        private void InitializeDarkModeToggle()
+        {
+            chkDarkMode = new CheckBox();
+            chkDarkMode.Name = "chkDarkMode";
+            chkDarkMode.Text = "Dark Mode";
+            chkDarkMode.AutoSize = true;
+            chkDarkMode.Location = new Point(500, 10); // Top right corner of form
+
+            chkDarkMode.CheckedChanged += (s, e) =>
+            {
+                bool isDark = chkDarkMode.Checked;
+                ToggleDarkMode(isDark);
+                
+            };
+
+            // Adds the checkbox directly to the Form (not to a tab)
+            this.Controls.Add(chkDarkMode);
+            chkDarkMode.BringToFront(); // Ensure it's visible
+        }
+
+        //dark mode toggle implementation
+        private void ToggleDarkMode(bool enableDarkMode)
+        {
+            isDarkModeEnabled = enableDarkMode;
+
+            Color backColor = enableDarkMode ? Color.FromArgb(30, 30, 30) : SystemColors.Control;
+            Color foreColor = enableDarkMode ? Color.White : Color.Black;
+
+            this.BackColor = backColor;
+
+            ApplyThemeToControls(this.Controls, backColor, foreColor);
+
+            // Just update the color of the existing ASCII logo
+            UpdateAsciiLogoColor();
+
+        }
+
+        private void ApplyThemeToControls(Control.ControlCollection controls, Color backColor, Color foreColor)
+        {
+            foreach (Control ctrl in controls)
+            {
+                if (ctrl is TabControl || ctrl is TabPage || ctrl is Panel || ctrl is GroupBox)
+                {
+                    ctrl.BackColor = backColor;
+                    ctrl.ForeColor = foreColor;
+                    ApplyThemeToControls(ctrl.Controls, backColor, foreColor);
+                }
+                else
+                {
+                    ctrl.BackColor = backColor;
+                    ctrl.ForeColor = foreColor;
+                }
+            }
+        }
+
+        private string asciiLogoText = @"
+  _____      _                _____             _            
+  / ____|    | |              / ____|           | |           
+ | |    _   _| |__  _ __ ___ | (___  _   _ _ __ | |_ ___ _ __ 
+ | |   | | | | '_ \| '__/ _ \ \___ \| | | | '_ \| __/ _ \ '__|
+ | |___| |_| | |_) | | | (_) |____) | |_| | | | | ||  __/ |   
+  \_____\__,_|_.__/|_| \___/|_____/ \__, |_| |_|\__\___|_|   
+                                      __/ |                    
+                                     |___/                     
+  _____           _                  _____              _      
+ / ____|         | |                / ____|            | |     
+| (___   ___  ___| |_ _   _ _ __   | |     ___  _ __ __| |___  
+ \___ \ / _ \/ __| __| | | | '_ \  | |    / _ \| '__/ _` / __| 
+ ____) |  __/ (__| |_| |_| | |_) | | |___| (_) | | | (_| \__ \ 
+|_____/ \___|\___|\__|\__,_| .__/   \_____|\___/|_|  \__,_|___/ 
+                           | |                                 
+                           |_|           
+
+       Cybersecurity Awareness Chatbot
+";
+
+        private void ShowAsciiLogo()
+        {
+            // Append the logo at the end of the conversation only if it's not already there
+            if (!rtbConversation.Text.StartsWith(asciiLogoText.Trim()))
+
+            {
+                rtbConversation.SelectionStart = 0;
+                rtbConversation.SelectionLength = 0;
+                rtbConversation.SelectionColor = isDarkModeEnabled ? Color.Cyan : Color.DarkBlue;
+                rtbConversation.SelectedText = asciiLogoText + Environment.NewLine + Environment.NewLine;
+
+                // Store the length of the added logo text + newlines for later color updates
+                asciiLogoLength = asciiLogoText.Length + (Environment.NewLine.Length * 2);
+
+                rtbConversation.SelectionColor = rtbConversation.ForeColor;
+            }
+        }
+        private void UpdateAsciiLogoColor()
+        {
+            if (rtbConversation.TextLength >= asciiLogoLength && asciiLogoLength > 0)
+            {
+                rtbConversation.SelectionStart = 0;
+                rtbConversation.SelectionLength = asciiLogoLength;
+                rtbConversation.SelectionColor = isDarkModeEnabled ? Color.Cyan : Color.DarkBlue;
+                rtbConversation.SelectionLength = 0; // clear selection
+            }
+        }
+
 
         private async void Form1_Load(object sender, EventArgs e)
         {
@@ -53,37 +173,15 @@ namespace CyberSecurityChatbotGUI
             AppendBotMessage(welcomeMessage);
 
 
-            string asciiLogo = @"
-  _____      _                _____             _            
-  / ____|    | |              / ____|           | |           
- | |    _   _| |__  _ __ ___ | (___  _   _ _ __ | |_ ___ _ __ 
- | |   | | | | '_ \| '__/ _ \ \___ \| | | | '_ \| __/ _ \ '__|
- | |___| |_| | |_) | | | (_) |____) | |_| | | | | ||  __/ |   
-  \_____\__,_|_.__/|_| \___/|_____/ \__, |_| |_|\__\___|_|   
-                                      __/ |                    
-                                     |___/                     
-  _____           _                  _____              _      
- / ____|         | |                / ____|            | |     
-| (___   ___  ___| |_ _   _ _ __   | |     ___  _ __ __| |___  
- \___ \ / _ \/ __| __| | | | '_ \  | |    / _ \| '__/ _` / __| 
- ____) |  __/ (__| |_| |_| | |_) | | |___| (_) | | | (_| \__ \ 
-|_____/ \___|\___|\__|\__,_| .__/   \_____|\___/|_|  \__,_|___/ 
-                           | |                                  
-                           |_|           
-
-       Cybersecurity Awareness Chatbot
-";
-            rtbConversation.SelectionStart = rtbConversation.TextLength;
-            rtbConversation.SelectionColor = Color.DarkBlue;
-            rtbConversation.AppendText(asciiLogo + Environment.NewLine);
-            rtbConversation.SelectionColor = rtbConversation.ForeColor;
-
+            ShowAsciiLogo();
 
 
             RefreshTaskList(); // Display any tasks (initially empty)
 
+            quizQuestions = QuizData.GetQuestions().OrderBy(q => rng.Next()).ToList();
             LoadCurrentQuestion();
         }
+
 
         private string PromptForName()
         {
@@ -344,12 +442,15 @@ namespace CyberSecurityChatbotGUI
         {
             Color color = Color.Black;
             string lower = message.ToLower();
+
             if (lower.Contains("goodbye") || lower.Contains("welcome"))
                 color = Color.Purple;
             else if (lower.Contains("error") || lower.Contains("didn't quite understand"))
                 color = Color.Red;
             else if (lower.Contains("tip") || lower.Contains("protect") || lower.Contains("stay safe"))
                 color = Color.Green;
+            else if (isDarkModeEnabled)
+                color = Color.LightSkyBlue; //  use bright blue only in dark mode
 
             rtbConversation.SelectionStart = rtbConversation.TextLength;
             rtbConversation.SelectionColor = color;
@@ -456,12 +557,10 @@ namespace CyberSecurityChatbotGUI
         
 
         // Quiz state
-        private List<QuizQuestion> quizQuestions = QuizData.GetQuestions();
-        private int currentQuestionIndex = 0;
-        private int score = 0;
-        private bool answerSubmitted = false;
-
         
+        private bool answerSubmitted = false;
+        private Random rng = new Random();
+
         private void LoadCurrentQuestion()
         {
             if (currentQuestionIndex >= quizQuestions.Count)
@@ -469,9 +568,9 @@ namespace CyberSecurityChatbotGUI
                 lblQuestion.Text = $"Quiz Completed! You scored {score} out of {quizQuestions.Count}.";
 
                 // Provide score-based feedback
-                if (score >= 8)
+                if (score >= 16)
                     lblFeedback.Text = "Excellent! You're a security pro! Click 'Restart Quiz' to try again.";
-                else if (score >= 5)
+                else if (score >= 9)
                     lblFeedback.Text = "Good job! Keep learning! Click 'Restart Quiz' to try again.";
                 else
                     lblFeedback.Text = "Keep practicing – cybersecurity is important! Click 'Restart Quiz' to try again.";
@@ -479,7 +578,7 @@ namespace CyberSecurityChatbotGUI
                 
                 lblFeedback.Text += $"\n\nYou can type 'exit' anytime to close the application, {userName}.";
 
-                lblFeedback.ForeColor = Color.Black;
+                lblFeedback.ForeColor = isDarkModeEnabled ? Color.LightSkyBlue : Color.Black;
                 DisableQuizButtons();
                 AddToActivityLog($"Quiz completed. Score: {score}/{quizQuestions.Count}");
                 return;
@@ -551,6 +650,7 @@ namespace CyberSecurityChatbotGUI
         {
             score = 0;
             currentQuestionIndex = 0;
+            quizQuestions = QuizData.GetQuestions().OrderBy(q => rng.Next()).ToList();
             EnableQuizButtons();
             LoadCurrentQuestion();
             AddToActivityLog("Quiz restarted.");

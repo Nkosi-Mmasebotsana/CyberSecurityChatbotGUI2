@@ -43,7 +43,6 @@ namespace CyberSecurityChatbotGUI
                     "A type of firewall"
                 }, 1, "Ransomware is malware that demands payment to unlock your files."),
 
-                // Additional 5 descriptive, educational questions:
 
                 new QuizQuestion("Why should you avoid using public Wi-Fi for sensitive tasks?", new[] {
                     "Because it's slower",
@@ -79,6 +78,102 @@ namespace CyberSecurityChatbotGUI
                     "To speed up login",
                     "To reduce password length"
                 }, 1, "Unique passwords prevent attackers from accessing multiple accounts if one is compromised."),
+
+                  new QuizQuestion(
+                    "What's the best practice for creating strong passwords?",
+                    new[] {
+                        "Use personal information",
+                        "Use common dictionary words",
+                        "Combine uppercase, lowercase, numbers and symbols",
+                        "Use the same password everywhere"
+                    },
+                    2,
+                    "Strong passwords combine uppercase, lowercase letters, numbers, and symbols."
+                ),
+
+                new QuizQuestion(
+                    "What should you do if you receive a suspicious email asking for personal information?",
+                    new[] {
+                        "Reply with the information",
+                        "Forward it to your IT department",
+                        "Click any links to verify",
+                        "Ignore it and delete"
+                    },
+                    1,
+                    "Suspicious emails should be forwarded to IT; do not reply or click links."
+                ),
+
+                   new QuizQuestion(
+                    "Which of these is NOT a common phishing tactic?",
+                    new[] {
+                        "Urgent action required",
+                        "Too-good-to-be-true offers",
+                        "Requests for sensitive information",
+                        "Official-looking government seals"
+                    },
+                    3,
+                    "Official-looking government seals are often faked but can appear in phishing scams."
+                ),
+
+                new QuizQuestion(
+                    "What's the safest way to use public Wi-Fi?",
+                    new[] {
+                        "Access banking directly",
+                        "Use a VPN",
+                        "Disable your firewall",
+                        "Use simple passwords"
+                    },
+                    1,
+                    "Using a VPN encrypts your connection, making public Wi-Fi safer."
+                ),
+
+                  new QuizQuestion(
+                    "What should you do before clicking a shortened URL?",
+                    new[] {
+                        "Hover to see the real destination",
+                        "Always trust it",
+                        "Ask a coworker to click first",
+                        "Disable antivirus"
+                    },
+                    0,
+                    "Hovering shows the real URL, helping you avoid malicious sites."
+                ),
+
+                new QuizQuestion(
+                    "Which is NOT a good security practice?",
+                    new[] {
+                        "Regular backups",
+                        "Sharing passwords with colleagues",
+                        "Using password managers",
+                        "Enabling automatic updates"
+                    },
+                    1,
+                    "Sharing passwords is insecure and should be avoided."
+                ),
+
+                 new QuizQuestion(
+                    "What does HTTPS indicate in a website address?",
+                    new[] {
+                        "The site is popular",
+                        "The connection is encrypted",
+                        "The site is government-approved",
+                        "The site loads faster"
+                    },
+                    1,
+                    "HTTPS means the connection between your browser and the site is encrypted."
+                ),
+
+                new QuizQuestion(
+                    "How can you verify a sender's identity?",
+                    new[] {
+                        "Check the email address carefully",
+                        "Look for spelling mistakes",
+                        "Verify through a separate channel",
+                        "All of the above"
+                    },
+                    3,
+                    "Verifying sender identity involves multiple checks, including email address and separate verification."
+                ),
             };
         }
     }
